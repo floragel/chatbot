@@ -27,6 +27,15 @@ module.exports = withBundleAnalyzer(
     },
     experimental: {
       serverComponentsExternalPackages: ["sharp", "onnxruntime-node"]
+    },
+    webpack: (config, { isServer }) => {
+      config.externals.push(({ request }, callback) => {
+        if (/onnxruntime_binding\.node$/.test(request)) {
+          return callback(null, 'commonjs ' + request);
+        }
+        callback();
+      });
+      return config;
     }
   })
 )
